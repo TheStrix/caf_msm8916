@@ -3244,18 +3244,6 @@ int wm_adsp_stream_read(struct wm_adsp *dsp, char __user *buf, size_t count)
 				 count))
 			return -EFAULT;
 	}
-	/* Wait for the RAM to start, should be near instantaneous */
-	for (count = 0; count < 10; ++count) {
-		ret = regmap_read(dsp->regmap, dsp->base + ADSP2_STATUS1,
-				  &val);
-		if (ret != 0)
-			return ret;
-
-		if (val & ADSP2_RAM_RDY)
-			break;
-
-		msleep(1);
-	}
 
 	dsp->capt_buf.tail += count;
 	dsp->capt_buf.tail &= dsp->capt_buf_size - 1;
